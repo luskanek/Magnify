@@ -8,8 +8,8 @@ WorldMapFrame:SetScript('OnShow',
         this:ClearAllPoints()
         this:SetPoint('CENTER', UIParent, 0, 0)
         this:SetScale(0.75)
-        this:SetWidth(WorldMapButton:GetWidth() + 15)
-        this:SetHeight(WorldMapButton:GetHeight() + 55)
+		this:SetHeight(768)
+        this:SetWidth(1024)
         this:EnableMouse(true)
         this:EnableKeyboard(false)
 

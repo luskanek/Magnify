@@ -23,7 +23,7 @@ end
 CreateFrame('ScrollFrame', 'WorldMapScrollFrame', WorldMapFrame, 'FauxScrollFrameTemplate')
 WorldMapScrollFrame:SetHeight(668)
 WorldMapScrollFrame:SetWidth(1002)
-WorldMapScrollFrame:SetPoint('TOP', WorldMapFrame, 0, -50)
+WorldMapScrollFrame:SetPoint('TOP', WorldMapFrame, 0, -70)
 WorldMapScrollFrame:SetScrollChild(WorldMapDetailFrame)
 WorldMapScrollFrame:SetScript('OnMouseWheel',
     function()
@@ -104,9 +104,10 @@ WorldMapButton:SetScript('OnUpdate',
 
         -- reposition player
         local x, y = GetPlayerMapPosition('player')
-
+        
         x = (x * WorldMapDetailFrame:GetWidth() * WorldMapDetailFrame:GetScale())
         y = (-y * WorldMapDetailFrame:GetHeight() * WorldMapDetailFrame:GetScale())
+        
         PositionWorldMapArrowFrame('CENTER', 'WorldMapDetailFrame', 'TOPLEFT', x, y)
         WorldMapPlayer:SetPoint('CENTER', 'WorldMapDetailFrame', 'TOPLEFT', x, y)
 
@@ -123,7 +124,7 @@ handler:SetScript('OnEvent',
         -- adjust map zone text position
         WorldMapFrameAreaFrame:SetParent(WorldMapFrame)
         WorldMapFrameAreaFrame:ClearAllPoints()
-        WorldMapFrameAreaFrame:SetPoint('TOP', WorldMapFrame, 0, -50)
+        WorldMapFrameAreaFrame:SetPoint('TOP', WorldMapFrame, 0, -60)
         WorldMapFrameAreaFrame:SetFrameStrata('FULLSCREEN_DIALOG')
         
         -- hide clutter
