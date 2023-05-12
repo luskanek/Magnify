@@ -1,0 +1,10 @@
+## Interface: 11200
+## Title: Magnify |cff808080by luskanek
+## Author: luskanek
+## Notes: Rescales the world map frame and enables world map zoom.
+## Version: GIT
+
+main.lua
+compat.lua
+
+zoom.lua
