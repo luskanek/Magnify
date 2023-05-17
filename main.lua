@@ -1,5 +1,3 @@
-Uncharted = CreateFrame('Frame', 'Uncharted')
-
 local WorldMapFrame_OnShow = WorldMapFrame:GetScript('OnShow')
 WorldMapFrame:SetScript('OnShow',
     function()
@@ -17,8 +15,9 @@ WorldMapFrame:SetScript('OnShow',
     end
 )
 
-Uncharted:RegisterEvent('VARIABLES_LOADED')
-Uncharted:SetScript('OnEvent',
+local Magnify = CreateFrame('Frame', 'Magnify')
+Magnify:RegisterEvent('VARIABLES_LOADED')
+Magnify:SetScript('OnEvent',
     function()
         UIPanelWindows['WorldMapFrame'] = { area = 'center', pushable = 0, whileDead = 1 }
     end
