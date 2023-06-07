@@ -6,5 +6,3 @@
 
 main.lua
 compat.lua
-
-zoom.lua

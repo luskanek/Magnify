@@ -1,17 +1,25 @@
 local _G = getfenv(0)
 
-local handler = CreateFrame('Frame')
-handler:RegisterEvent('PLAYER_ENTERING_WORLD')
-handler:SetScript('OnEvent',
+local Magnify_OnEvent = Magnify:GetScript('OnEvent')
+Magnify:RegisterEvent('PLAYER_ENTERING_WORLD')
+Magnify:SetScript('OnEvent',
     function()
+        Magnify_OnEvent()
+
         if event == 'PLAYER_ENTERING_WORLD' then
             -- Cartographer
             if IsAddOnLoaded('Cartographer') then
-                CartographerGoToButton:ClearAllPoints()
-                CartographerGoToButton:SetPoint('TOPLEFT', WorldMapPositioningGuide, 12, -35)
+                local goToButton = _G['CartographerGoToButton']
+                if goToButton then
+                    CartographerGoToButton:ClearAllPoints()
+                    CartographerGoToButton:SetPoint('TOPLEFT', WorldMapPositioningGuide, 12, -35)
+                end
 
-                CartographerOptionsButton:ClearAllPoints()
-                CartographerOptionsButton:SetPoint('TOPRIGHT', WorldMapPositioningGuide, -12, -35)
+                local optionsButton = _G['CartographerOptionsButton']
+                if optionsButton then
+                    CartographerOptionsButton:ClearAllPoints()
+                    CartographerOptionsButton:SetPoint('TOPRIGHT', WorldMapPositioningGuide, -12, -35)
+                end
 
                 local holder = _G['CartographerLookNFeelOverlayHolder']
                 if holder then
