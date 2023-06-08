@@ -1,6 +1,8 @@
 local ZOOM_MIN = 1
-local ZOOM_MAX = 1.5
+local ZOOM_MAX = 1.6
 local ZOOM_STEP = 0.2
+
+local WorldMapPlayerModel = nil
 
 function WorldMapScrollFrame_OnPan(cursorX, cursorY)
 	local dX = WorldMapScrollFrame.cursorX - cursorX
@@ -36,6 +38,15 @@ Magnify:SetScript('OnEvent',
 		WorldMapMagnifyingGlassButton:Hide()
 		
 		BlackoutWorld:Hide()
+
+		-- credit: https://github.com/Road-block/Cartographer
+		local children = { WorldMapFrame:GetChildren() }
+		for _, v in ipairs(children) do
+			if v:GetFrameType() == "Model" and not v:GetName() then
+				WorldMapPlayerModel = v
+				break
+			end
+		end
 	end
 )
 
@@ -61,6 +72,7 @@ WorldMapScrollFrame:SetScript('OnMouseWheel',
 		newScale = min(ZOOM_MAX, newScale)
 		
 		WorldMapDetailFrame:SetScale(newScale)
+		WorldMapPlayerModel:SetModelScale(newScale)
 		
 		WorldMapScrollFrame.maxX = ((WorldMapDetailFrame:GetWidth() * newScale) - WorldMapScrollFrame:GetWidth()) / newScale
 		WorldMapScrollFrame.maxY = ((WorldMapDetailFrame:GetHeight() * newScale) - WorldMapScrollFrame:GetHeight()) / newScale
@@ -77,16 +89,6 @@ WorldMapScrollFrame:SetScript('OnMouseWheel',
 		
 		WorldMapScrollFrame:SetHorizontalScroll(-newScrollH)
 		WorldMapScrollFrame:SetVerticalScroll(newScrollV)
-	end
-)
-
-local WorldMapFrame_OnShow = WorldMapFrame:GetScript('OnShow')
-WorldMapFrame:SetScript('OnShow',
-	function()
-		WorldMapFrame_OnShow()
-		
-		WorldMapPing:Hide()
-		WorldMapScrollFrameScrollBar:Hide()
 	end
 )
 
@@ -120,15 +122,19 @@ local WorldMapButton_OnUpdate = WorldMapButton:GetScript('OnUpdate')
 WorldMapButton:SetScript('OnUpdate',
 	function()
 		WorldMapButton_OnUpdate()
-		
-		-- reposition player
+
+		-- reposition player and ping
 		local x, y = GetPlayerMapPosition('player')
 		
 		x = (x * WorldMapDetailFrame:GetWidth() * WorldMapDetailFrame:GetScale())
 		y = (-y * WorldMapDetailFrame:GetHeight() * WorldMapDetailFrame:GetScale())
-		
+
 		PositionWorldMapArrowFrame('CENTER', 'WorldMapDetailFrame', 'TOPLEFT', x, y)
 		WorldMapPlayer:SetPoint('CENTER', 'WorldMapDetailFrame', 'TOPLEFT', x, y)
+		WorldMapPlayer:SetFrameLevel(3)
+
+		WorldMapPing:SetParent(WorldMapScrollFrame)
+		WorldMapPing:SetPoint("CENTER", "WorldMapDetailFrame", "TOPLEFT", x - 7, y - 8)
 		
 		if WorldMapScrollFrame.panning then
 			WorldMapScrollFrame_OnPan(GetCursorPosition())
@@ -148,5 +154,16 @@ WorldMapFrame:SetScript('OnShow',
 		this:SetWidth(1024)
 		this:EnableMouse(true)
 		this:EnableKeyboard(false)
+
+		WorldMapScrollFrameScrollBar:Hide()
+	end
+)
+
+local WorldMapFrame_OnHide = WorldMapFrame:GetScript('OnHide')
+WorldMapFrame:SetScript('OnHide',
+	function()
+		WorldMapFrame_OnHide()
+
+		WorldMapScrollFrame.panning = false
 	end
 )
