@@ -26,6 +26,12 @@ Magnify = CreateFrame('Frame')
 Magnify:RegisterEvent('VARIABLES_LOADED')
 Magnify:SetScript('OnEvent',
 	function()
+		if not Magnify_Settings then
+			Magnify_Settings = {
+				 ['zoom_reset'] = false
+			}
+	  end
+
 		UIPanelWindows['WorldMapFrame'] = { area = 'center', pushable = 0, whileDead = 1 }
 		
 		-- adjust map zone text position
@@ -165,5 +171,34 @@ WorldMapFrame:SetScript('OnHide',
 		WorldMapFrame_OnHide()
 
 		WorldMapScrollFrame.panning = false
+
+		if Magnify_Settings['zoom_reset'] then
+			WorldMapDetailFrame:SetScale(1)
+			WorldMapPlayerModel:SetModelScale(1)
+			
+			WorldMapScrollFrame:SetHorizontalScroll(0)
+			WorldMapScrollFrame:SetVerticalScroll(0)
+
+			WorldMapScrollFrame.zoomedIn = false
+		end
 	end
 )
+
+SLASH_MAGNIFY1 = '/magnify'
+SlashCmdList['MAGNIFY'] = function(msg)
+	local args = {}
+	local i = 1
+	for arg in string.gfind(string.lower(msg), "%S+") do
+		args[i] = arg
+		i = i + 1
+	end
+	
+	if not args[1] then
+		DEFAULT_CHAT_FRAME:AddMessage("/magnify reset - toggle world map zoom reset when closing the world map")
+		
+	elseif args[1] == 'reset' then
+		Magnify_Settings['zoom_reset'] = not Magnify_Settings['zoom_reset']
+		
+		DEFAULT_CHAT_FRAME:AddMessage("World map zoom reset " .. (Magnify_Settings['zoom_reset'] and "enabled" or "disabled") .. ".")
+	end
+end

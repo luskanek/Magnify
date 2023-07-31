@@ -3,6 +3,7 @@
 ## Author: luskanek
 ## Notes: Rescales the world map frame and enables world map zoom.
 ## Version: GIT
+## SavedVariablesPerCharacter: Magnify_Settings
 
 main.lua
 compat.lua
