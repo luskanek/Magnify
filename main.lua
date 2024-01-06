@@ -118,21 +118,6 @@ local function WorldMapButton_OnUpdate()
 	end
 end
 
-local WorldMapFrame_OldOnShow = WorldMapFrame:GetScript('OnShow')
-local function WorldMapFrame_OnShow()
-	WorldMapFrame_OldOnShow()
-
-	this:ClearAllPoints()
-	this:SetPoint('CENTER', UIParent, 0, 0)
-	this:SetScale(0.75)
-	this:SetHeight(768)
-	this:SetWidth(1024)
-	this:EnableMouse(true)
-	this:EnableKeyboard(false)
-
-	WorldMapScrollFrameScrollBar:Hide()
-end
-
 local WorldMapFrame_OldOnHide = WorldMapFrame:GetScript('OnHide')
 local function WorldMapFrame_OnHide()
 	WorldMapFrame_OldOnHide()
@@ -164,7 +149,7 @@ local function HandleEvent()
 	scrollframe:SetScrollChild(WorldMapDetailFrame)
 	scrollframe:SetScript('OnMouseWheel', WorldMapScrollFrame_OnMouseWheel)
 
-	UIPanelWindows['WorldMapFrame'] = { area = 'center', pushable = 0, whileDead = 1 }
+	WorldMapScrollFrameScrollBar:Hide()
 
 	-- adjust map zone text position
 	WorldMapFrameAreaFrame:SetParent(WorldMapFrame)
@@ -176,8 +161,6 @@ local function HandleEvent()
 
 	-- hide clutter
 	WorldMapMagnifyingGlassButton:Hide()
-
-	BlackoutWorld:Hide()
 
 	-- hide player indicator model
 	-- credit: https://github.com/Road-block/Cartographer
@@ -207,7 +190,6 @@ local function HandleEvent()
 	WorldMapButton:SetScript('OnMouseUp', WorldMapButton_OnMouseUp)
 	WorldMapButton:SetScript('OnUpdate', WorldMapButton_OnUpdate)
 
-	WorldMapFrame:SetScript('OnShow', WorldMapFrame_OnShow)
 	WorldMapFrame:SetScript('OnHide', WorldMapFrame_OnHide)
 end
 
