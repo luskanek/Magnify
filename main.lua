@@ -81,11 +81,20 @@ local function WorldMapButton_OnMouseDown()
 end
 
 local function WorldMapButton_OnMouseUp()
-	if arg1 == 'LeftButton' and WorldMapScrollFrame.panning then
-		WorldMapScrollFrame.panning = false
-	elseif (arg1 == 'LeftButton' or arg1 == 'RightButton') and not WorldMapScrollFrame.zoomedIn then
+	WorldMapScrollFrame.panning = false
+
+	if not WorldMapScrollFrame.moved then
 		WorldMapButton_OnClick(arg1)
+
+		WorldMapDetailFrame:SetScale(1)
+
+		WorldMapScrollFrame:SetHorizontalScroll(0)
+		WorldMapScrollFrame:SetVerticalScroll(0)
+
+		WorldMapScrollFrame.zoomedIn = false
 	end
+
+	WorldMapScrollFrame.moved = false
 end
 
 local WorldMapButton_OldOnUpdate = WorldMapButton:GetScript('OnUpdate')
@@ -126,7 +135,6 @@ local function WorldMapFrame_OnHide()
 
 	if Magnify_Settings['zoom_reset'] then
 		WorldMapDetailFrame:SetScale(1)
-		WorldMapPlayerModel:SetModelScale(1)
 
 		WorldMapScrollFrame:SetHorizontalScroll(0)
 		WorldMapScrollFrame:SetVerticalScroll(0)
