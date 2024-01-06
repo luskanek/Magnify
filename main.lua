@@ -4,6 +4,9 @@ local ZOOM_STEP = 0.2
 
 local WorldMapPlayerModel = nil
 
+-- upvalues
+local cos, sin, rad, sqrt = math.cos, math.sin, math.rad, math.sqrt
+
 function WorldMapScrollFrame_OnPan(cursorX, cursorY)
 	local dX = WorldMapScrollFrame.cursorX - cursorX
 	local dY = cursorY - WorldMapScrollFrame.cursorY
@@ -48,11 +51,23 @@ Magnify:SetScript('OnEvent',
 		-- credit: https://github.com/Road-block/Cartographer
 		local children = { WorldMapFrame:GetChildren() }
 		for _, v in ipairs(children) do
-			if v:GetFrameType() == "Model" and not v:GetName() then
+			if v:GetFrameType() == 'Model' and not v:GetName() then
+				v:SetScript('OnShow', function() this:Hide() end)
+
 				WorldMapPlayerModel = v
+
 				break
 			end
 		end
+
+		WorldMapPlayer.Icon = WorldMapPlayer:CreateTexture('WorldMapPlayerIcon', 'ARTWORK')
+		WorldMapPlayer.Icon:SetWidth(24)
+		WorldMapPlayer.Icon:SetHeight(24)
+		WorldMapPlayer.Icon:SetPoint('CENTER', WorldMapPlayer)
+		WorldMapPlayer.Icon:SetTexture('Interface\\AddOns\\Magnify\\assets\\WorldMapArrow')
+		WorldMapPlayer.Icon:SetTexCoord(0, 0, 1, 1)
+
+		WorldMapPing:SetParent(WorldMapScrollFrame)
 	end
 )
 
@@ -78,7 +93,6 @@ WorldMapScrollFrame:SetScript('OnMouseWheel',
 		newScale = min(ZOOM_MAX, newScale)
 		
 		WorldMapDetailFrame:SetScale(newScale)
-		WorldMapPlayerModel:SetModelScale(newScale)
 		
 		WorldMapScrollFrame.maxX = ((WorldMapDetailFrame:GetWidth() * newScale) - WorldMapScrollFrame:GetWidth()) / newScale
 		WorldMapScrollFrame.maxY = ((WorldMapDetailFrame:GetHeight() * newScale) - WorldMapScrollFrame:GetHeight()) / newScale
@@ -129,19 +143,27 @@ WorldMapButton:SetScript('OnUpdate',
 	function()
 		WorldMapButton_OnUpdate()
 
-		-- reposition player and ping
+		-- reposition player and ping indicators
 		local x, y = GetPlayerMapPosition('player')
-		
-		x = (x * WorldMapDetailFrame:GetWidth() * WorldMapDetailFrame:GetScale())
-		y = (-y * WorldMapDetailFrame:GetHeight() * WorldMapDetailFrame:GetScale())
 
-		PositionWorldMapArrowFrame('CENTER', 'WorldMapDetailFrame', 'TOPLEFT', x, y)
-		WorldMapPlayer:SetPoint('CENTER', 'WorldMapDetailFrame', 'TOPLEFT', x, y)
-		WorldMapPlayer:SetFrameLevel(3)
+		x = x * this:GetWidth()
+		y = -y * this:GetHeight()
 
-		WorldMapPing:SetParent(WorldMapScrollFrame)
-		WorldMapPing:SetPoint("CENTER", "WorldMapDetailFrame", "TOPLEFT", x - 7, y - 8)
-		
+		WorldMapPlayer:SetPoint('CENTER', this, 'TOPLEFT', x, y)
+
+		-- credit: https://wowwiki-archive.fandom.com/wiki/SetTexCoord_Transformations
+		local s = sqrt(2)
+		local r = WorldMapPlayerModel:GetFacing()
+
+		local LRx, LRy = 0.5 + cos(r + 0.25 * math.pi) / s, 0.5 + sin(r + 0.25 * math.pi) / s
+		local LLx, LLy = 0.5 + cos(r + 0.75 * math.pi) / s, 0.5 + sin(r + 0.75 * math.pi) / s
+		local ULx, ULy = 0.5 + cos(r + 1.25 * math.pi) / s, 0.5 + sin(r + 1.25 * math.pi) / s
+		local URx, URy = 0.5 + cos(r - 0.25 * math.pi) / s, 0.5 + sin(r - 0.25 * math.pi) / s
+
+		WorldMapPlayerIcon:SetTexCoord(ULx, ULy, LLx, LLy, URx, URy, LRx, LRy)
+
+		WorldMapPing:SetPoint('CENTER', this, 'TOPLEFT', x * WorldMapDetailFrame:GetScale() - 8, y * WorldMapDetailFrame:GetScale() - 8)
+
 		if WorldMapScrollFrame.panning then
 			WorldMapScrollFrame_OnPan(GetCursorPosition())
 		end
