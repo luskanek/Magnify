@@ -167,9 +167,6 @@ local function HandleEvent()
 
 	WorldMapButton:SetParent(WorldMapDetailFrame)
 
-	-- hide clutter
-	WorldMapMagnifyingGlassButton:Hide()
-
 	-- hide player indicator model
 	-- credit: https://github.com/Road-block/Cartographer
 	local children = { WorldMapFrame:GetChildren() }
