@@ -21,6 +21,13 @@ local function HandleEvent()
 		end
 	end
 
+	-- ShaguTweaks
+	if IsAddOnLoaded('ShaguTweaks') then
+		if ShaguTweaks_config["WorldMap Window"] == 1 then
+			WorldMapScrollFrame:SetPoint('TOP', WorldMapFrame, 0, -48)
+		end
+	end
+
 	-- pfQuest
 	if IsAddOnLoaded('pfQuest') then
 		local dropdown = _G['pfQuestMapDropdown']
