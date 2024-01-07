@@ -1,9 +1,7 @@
-local ZOOM_MIN = 1
-local ZOOM_MAX = 1.6
-local ZOOM_STEP = 0.2
-
-local PLAYER_FLASH_INTERVAL = 0.25
-local PLAYER_FLASH_COUNT = 10
+MAGNIFY_MAX_ZOOM = 1.6
+MAGNIFY_ZOOM_STEP = 0.2
+MAGNIFY_PLAYER_FLASH_INTERVAL = 0.25
+MAGNIFY_PLAYER_FLASH_COUNT = 10
 
 local WorldMapPlayerModel = nil
 
@@ -28,15 +26,15 @@ local function WorldMapScrollFrame_OnMouseWheel()
 
 	local oldScale = WorldMapDetailFrame:GetScale()
 	local newScale
-	newScale = oldScale + arg1 * ZOOM_STEP
-	newScale = max(ZOOM_MIN, newScale)
-	newScale = min(ZOOM_MAX, newScale)
+	newScale = oldScale + arg1 * MAGNIFY_ZOOM_STEP
+	newScale = max(1, newScale)
+	newScale = min(MAGNIFY_MAX_ZOOM, newScale)
 
 	WorldMapDetailFrame:SetScale(newScale)
 
 	WorldMapScrollFrame.maxX = ((WorldMapDetailFrame:GetWidth() * newScale) - WorldMapScrollFrame:GetWidth()) / newScale
 	WorldMapScrollFrame.maxY = ((WorldMapDetailFrame:GetHeight() * newScale) - WorldMapScrollFrame:GetHeight()) / newScale
-	WorldMapScrollFrame.zoomedIn = WorldMapDetailFrame:GetScale() > ZOOM_MIN
+	WorldMapScrollFrame.zoomedIn = WorldMapDetailFrame:GetScale() > 1
 
 	local scaleChange = newScale / oldScale
 	local newScrollH = scaleChange * (frameX - oldScrollH) - frameX
@@ -130,10 +128,10 @@ end
 local function WorldMapPlayer_OnUpdate()
 	this.Elapsed = this.Elapsed + arg1
 
-	if this.Elapsed > PLAYER_FLASH_INTERVAL then
+	if this.Elapsed > MAGNIFY_PLAYER_FLASH_INTERVAL then
 		this.Elapsed = 0
 
-		if this.Flashes < PLAYER_FLASH_COUNT then
+		if this.Flashes < MAGNIFY_PLAYER_FLASH_COUNT then
 			this.Flashes = this.Flashes + 1
 
 			if this:GetAlpha() == 1 then
@@ -153,7 +151,9 @@ local WorldMapFrame_OldOnShow = WorldMapFrame:GetScript('OnShow')
 local function WorldMapFrame_OnShow()
 	WorldMapFrame_OldOnShow()
 
-	WorldMapPlayer:SetScript('OnUpdate', WorldMapPlayer_OnUpdate)
+	if Magnify_Settings['arrow_flash'] then
+		WorldMapPlayer:SetScript('OnUpdate', WorldMapPlayer_OnUpdate)
+	end
 end
 
 local WorldMapFrame_OldOnHide = WorldMapFrame:GetScript('OnHide')
@@ -178,9 +178,14 @@ end
 local function HandleEvent()
 	if not Magnify_Settings then
 		Magnify_Settings = {
+			['arrow_flash'] = true,
+			['arrow_scale'] = 1,
+			['max_zoom'] = 1.6,
 			['zoom_reset'] = false
 		}
 	end
+
+	MAGNIFY_MAX_ZOOM = (Magnify_Settings['max_zoom'] or MAGNIFY_MAX_ZOOM)
 
 	local scrollframe = CreateFrame('ScrollFrame', 'WorldMapScrollFrame', WorldMapFrame, 'FauxScrollFrameTemplate')
 	scrollframe:SetHeight(668)
@@ -215,9 +220,11 @@ local function HandleEvent()
 	WorldMapPing.Show = function() return end
 
 	-- replace player indicator model with a better solution
+	local size = 24 * (Magnify_Settings['arrow_scale'] or 1)
+
 	WorldMapPlayer.Icon = WorldMapPlayer:CreateTexture('WorldMapPlayerIcon', 'ARTWORK')
-	WorldMapPlayer.Icon:SetWidth(24)
-	WorldMapPlayer.Icon:SetHeight(24)
+	WorldMapPlayer.Icon:SetWidth(size)
+	WorldMapPlayer.Icon:SetHeight(size)
 	WorldMapPlayer.Icon:SetPoint('CENTER', WorldMapPlayer)
 	WorldMapPlayer.Icon:SetTexture('Interface\\AddOns\\Magnify\\assets\\WorldMapArrow')
 	WorldMapPlayer.Icon:SetTexCoord(0, 0, 1, 1)
@@ -237,22 +244,3 @@ end
 local handler = CreateFrame('Frame')
 handler:RegisterEvent('VARIABLES_LOADED')
 handler:SetScript('OnEvent', HandleEvent)
-
-SLASH_MAGNIFY1 = '/magnify'
-SlashCmdList['MAGNIFY'] = function(msg)
-	local args = {}
-	local i = 1
-	for arg in string.gfind(string.lower(msg), '%S+') do
-		args[i] = arg
-		i = i + 1
-	end
-
-	if not args[1] then
-		DEFAULT_CHAT_FRAME:AddMessage('/magnify reset - toggle world map zoom reset when closing the world map')
-
-	elseif args[1] == 'reset' then
-		Magnify_Settings['zoom_reset'] = not Magnify_Settings['zoom_reset']
-
-		DEFAULT_CHAT_FRAME:AddMessage('World map zoom reset ' .. (Magnify_Settings['zoom_reset'] and 'enabled' or 'disabled') .. '.')
-	end
-end

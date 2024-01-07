@@ -6,4 +6,6 @@
 ## SavedVariablesPerCharacter: Magnify_Settings
 
 main.lua
+options.lua
+
 compat.lua
