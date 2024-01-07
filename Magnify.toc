@@ -1,7 +1,7 @@
 ## Interface: 11200
 ## Title: Magnify |cff808080by luskanek
 ## Author: luskanek
-## Notes: Rescales the world map frame and enables world map zoom.
+## Notes: World map zoom and enhancements.
 ## Version: GIT
 ## SavedVariablesPerCharacter: Magnify_Settings
 
