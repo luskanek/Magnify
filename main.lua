@@ -2,6 +2,9 @@ local ZOOM_MIN = 1
 local ZOOM_MAX = 1.6
 local ZOOM_STEP = 0.2
 
+local PLAYER_FLASH_INTERVAL = 0.25
+local PLAYER_FLASH_COUNT = 10
+
 local WorldMapPlayerModel = nil
 
 -- upvalues
@@ -119,12 +122,38 @@ local function WorldMapButton_OnUpdate()
 	local URx, URy = 0.5 + cos(r - 0.25 * math.pi) / s, 0.5 + sin(r - 0.25 * math.pi) / s
 
 	WorldMapPlayerIcon:SetTexCoord(ULx, ULy, LLx, LLy, URx, URy, LRx, LRy)
-
-	WorldMapPing:SetPoint('CENTER', this, 'TOPLEFT', x * WorldMapDetailFrame:GetScale() - 8, y * WorldMapDetailFrame:GetScale() - 8)
-
 	if WorldMapScrollFrame.panning then
 		WorldMapScrollFrame_OnPan(GetCursorPosition())
 	end
+end
+
+local function WorldMapPlayer_OnUpdate()
+	this.Elapsed = this.Elapsed + arg1
+
+	if this.Elapsed > PLAYER_FLASH_INTERVAL then
+		this.Elapsed = 0
+
+		if this.Flashes < PLAYER_FLASH_COUNT then
+			this.Flashes = this.Flashes + 1
+
+			if this:GetAlpha() == 1 then
+				this:SetAlpha(0)
+			else
+				this:SetAlpha(1)
+			end
+		else
+			this.Flashes = 0
+			this:SetAlpha(1)
+			this:SetScript('OnUpdate', nil)
+		end
+	end
+end
+
+local WorldMapFrame_OldOnShow = WorldMapFrame:GetScript('OnShow')
+local function WorldMapFrame_OnShow()
+	WorldMapFrame_OldOnShow()
+
+	WorldMapPlayer:SetScript('OnUpdate', WorldMapPlayer_OnUpdate)
 end
 
 local WorldMapFrame_OldOnHide = WorldMapFrame:GetScript('OnHide')
@@ -132,6 +161,9 @@ local function WorldMapFrame_OnHide()
 	WorldMapFrame_OldOnHide()
 
 	WorldMapScrollFrame.panning = false
+
+	WorldMapPlayer.Flashes = 0
+	WorldMapPlayer:SetScript('OnUpdate', nil)
 
 	if Magnify_Settings['zoom_reset'] then
 		WorldMapDetailFrame:SetScale(1)
@@ -167,7 +199,7 @@ local function HandleEvent()
 
 	WorldMapButton:SetParent(WorldMapDetailFrame)
 
-	-- hide player indicator model
+	-- hide player indicator and ping model
 	-- credit: https://github.com/Road-block/Cartographer
 	local children = { WorldMapFrame:GetChildren() }
 	for _, v in ipairs(children) do
@@ -180,6 +212,8 @@ local function HandleEvent()
 		end
 	end
 
+	WorldMapPing.Show = function() return end
+
 	-- replace player indicator model with a better solution
 	WorldMapPlayer.Icon = WorldMapPlayer:CreateTexture('WorldMapPlayerIcon', 'ARTWORK')
 	WorldMapPlayer.Icon:SetWidth(24)
@@ -188,13 +222,15 @@ local function HandleEvent()
 	WorldMapPlayer.Icon:SetTexture('Interface\\AddOns\\Magnify\\assets\\WorldMapArrow')
 	WorldMapPlayer.Icon:SetTexCoord(0, 0, 1, 1)
 
-	WorldMapPing:SetParent(WorldMapScrollFrame)
+	WorldMapPlayer.Flashes = 0
+	WorldMapPlayer.Elapsed = 0
 
 	-- override scripts
 	WorldMapButton:SetScript('OnMouseDown', WorldMapButton_OnMouseDown)
 	WorldMapButton:SetScript('OnMouseUp', WorldMapButton_OnMouseUp)
 	WorldMapButton:SetScript('OnUpdate', WorldMapButton_OnUpdate)
 
+	WorldMapFrame:SetScript('OnShow', WorldMapFrame_OnShow)
 	WorldMapFrame:SetScript('OnHide', WorldMapFrame_OnHide)
 end
 
