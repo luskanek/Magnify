@@ -38,6 +38,12 @@ local function HandleEvent()
 			dropdown:SetFrameStrata('FULLSCREEN_DIALOG')
 		end
 	end
+
+	if IsAddOnLoaded('pfUI') then
+		if pfUI.map then
+			WorldMapScrollFrame:SetPoint('TOP', WorldMapFrame, 0, -48)
+		end
+	end
 end
 
 local handler = CreateFrame('Frame')
