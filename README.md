@@ -1,7 +1,3 @@
-<p align="center">
-  <img src="logo.png" />
-</p>
-
 Magnify is a World of Warcraft (1.12) addon with its main feature being world map zoom. Along with this functionality, several changes have been applied to the world map frame:
 
 - The world map player arrow has been replaced with a hi-res texture.
