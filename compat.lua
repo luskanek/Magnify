@@ -1,6 +1,6 @@
 local _G = getfenv(0)
 
-local function HandleEvent()
+function Magnify_HandleAddons()
 	-- Cartographer
 	if IsAddOnLoaded('Cartographer') then
 		local goToButton = _G['CartographerGoToButton']
@@ -23,7 +23,7 @@ local function HandleEvent()
 
 	-- ShaguTweaks
 	if IsAddOnLoaded('ShaguTweaks') then
-		if ShaguTweaks_config["WorldMap Window"] == 1 then
+		if ShaguTweaks_config and ShaguTweaks_config["WorldMap Window"] == 1 then
 			WorldMapScrollFrame:SetPoint('TOP', WorldMapFrame, 0, -48)
 		end
 	end
@@ -36,6 +36,12 @@ local function HandleEvent()
 			dropdown:SetParent(WorldMapFrame)
 			dropdown:SetPoint('TOPRIGHT', 'WorldMapPositioningGuide', 0, -80)
 			dropdown:SetFrameStrata('FULLSCREEN_DIALOG')
+
+			if WORLDMAP_WINDOWED == 1 then
+				dropdown:SetPoint('TOPRIGHT', 'WorldMapPositioningGuide', 0, -40)
+			else
+				dropdown:SetPoint('TOPRIGHT', 'WorldMapPositioningGuide', 0, -80)
+			end
 		end
 	end
 
@@ -48,4 +54,4 @@ end
 
 local handler = CreateFrame('Frame')
 handler:RegisterEvent('PLAYER_ENTERING_WORLD')
-handler:SetScript('OnEvent', HandleEvent)
+handler:SetScript('OnEvent', Magnify_HandleAddons)
