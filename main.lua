@@ -1,4 +1,3 @@
-MAGNIFY_MIN_ZOOM = 1
 MAGNIFY_MAX_ZOOM = 1.6
 MAGNIFY_ZOOM_STEP = 0.2
 MAGNIFY_PLAYER_FLASH_INTERVAL = 0.25
@@ -15,15 +14,6 @@ local sqrt = math.sqrt
 
 local GetCursorPosition = GetCursorPosition
 local GetPlayerMapPosition = GetPlayerMapPosition
-
-local function ResetZoom()
-	WorldMapDetailFrame:SetScale(MAGNIFY_MIN_ZOOM)
-
-	WorldMapScrollFrame:SetHorizontalScroll(0)
-	WorldMapScrollFrame:SetVerticalScroll(0)
-
-	WorldMapScrollFrame.zoomedIn = false
-end
 
 local function WorldMapScrollFrame_OnMouseDown()
 	if arg1 == 'LeftButton' and this.zoomedIn then
@@ -45,7 +35,7 @@ local function WorldMapScrollFrame_OnMouseUp()
 	if not this.moved then
 		WorldMapButton_OnClick(arg1)
 
-		WorldMapDetailFrame:SetScale(MAGNIFY_MIN_ZOOM)
+		WorldMapDetailFrame:SetScale(1)
 
 		this:SetHorizontalScroll(0)
 		this:SetVerticalScroll(0)
@@ -68,14 +58,14 @@ local function WorldMapScrollFrame_OnMouseWheel()
 	local oldScale = WorldMapDetailFrame:GetScale()
 	local newScale
 	newScale = oldScale + arg1 * MAGNIFY_ZOOM_STEP
-	newScale = max(MAGNIFY_MIN_ZOOM, newScale)
+	newScale = max(1, newScale)
 	newScale = min(MAGNIFY_MAX_ZOOM, newScale)
 
 	WorldMapDetailFrame:SetScale(newScale)
 
 	this.maxX = ((WorldMapDetailFrame:GetWidth() * newScale) - this:GetWidth()) / newScale
 	this.maxY = ((WorldMapDetailFrame:GetHeight() * newScale) - this:GetHeight()) / newScale
-	this.zoomedIn = WorldMapDetailFrame:GetScale() > MAGNIFY_MIN_ZOOM
+	this.zoomedIn = WorldMapDetailFrame:GetScale() > 1
 
 	local scaleChange = newScale / oldScale
 	local newScrollH = scaleChange * (frameX - oldScrollH) - frameX
@@ -176,52 +166,13 @@ local function WorldMapFrame_OnHide()
 	WorldMapPlayer:SetScript('OnUpdate', nil)
 
 	if Magnify_Settings['zoom_reset'] then
-		ResetZoom()
+		WorldMapDetailFrame:SetScale(1)
+
+		WorldMapScrollFrame:SetHorizontalScroll(0)
+		WorldMapScrollFrame:SetVerticalScroll(0)
+
+		WorldMapScrollFrame.zoomedIn = false
 	end
-end
-
-local WorldMapFrame_OldMinimize = WorldMapFrame_Minimize
-function WorldMapFrame_Minimize()
-	WorldMapFrame_OldMinimize()
-
-	if WorldMapScrollFrame then
-		MAGNIFY_MIN_ZOOM = 0.7
-
-		WorldMapScrollFrame:SetWidth(702)
-		WorldMapScrollFrame:SetHeight(468)
-		WorldMapScrollFrame:SetPoint('TOP', WorldMapFrame, 2, -24)
-		WorldMapScrollFrame:SetScrollChild(WorldMapDetailFrame)
-
-		WorldMapButton:SetScale(1)
-
-		WorldMapFrameAreaFrame:ClearAllPoints()
-		WorldMapFrameAreaFrame:SetPoint('TOP', WorldMapFrame, 0, -15)
-
-		ResetZoom()
-	end
-
-	Magnify_HandleAddons()
-end
-
-local WorldMapFrame_OldMaximize = WorldMapFrame_Maximize
-function WorldMapFrame_Maximize()
-	WorldMapFrame_OldMaximize()
-
-	if WorldMapScrollFrame then
-		MAGNIFY_MIN_ZOOM = 1
-
-		WorldMapScrollFrame:SetWidth(1002)
-		WorldMapScrollFrame:SetHeight(668)
-		WorldMapScrollFrame:SetPoint('TOP', WorldMapFrame, 0, -70)
-		WorldMapScrollFrame:SetScrollChild(WorldMapDetailFrame)
-
-		WorldMapFrameAreaFrame:ClearAllPoints()
-		WorldMapFrameAreaFrame:SetPoint('TOP', WorldMapFrame, 0, -60)
-
-		ResetZoom()
-	end
-
-	Magnify_HandleAddons()
 end
 
 local function HandleEvent()
@@ -237,22 +188,22 @@ local function HandleEvent()
 	MAGNIFY_MAX_ZOOM = (Magnify_Settings['max_zoom'] or MAGNIFY_MAX_ZOOM)
 
 	local scrollframe = CreateFrame('ScrollFrame', 'WorldMapScrollFrame', WorldMapFrame, 'FauxScrollFrameTemplate')
+	scrollframe:SetWidth(1002)
+	scrollframe:SetHeight(668)
+	scrollframe:SetPoint('TOP', WorldMapFrame, 0, -70)
 	scrollframe:SetFrameLevel(3)
 	scrollframe:EnableMouse(true)
+	scrollframe:SetScrollChild(WorldMapDetailFrame)
 	scrollframe:SetScript('OnMouseDown', WorldMapScrollFrame_OnMouseDown)
 	scrollframe:SetScript('OnMouseUp', WorldMapScrollFrame_OnMouseUp)
 	scrollframe:SetScript('OnMouseWheel', WorldMapScrollFrame_OnMouseWheel)
 
 	WorldMapScrollFrameScrollBar:Hide()
 
-	if WORLDMAP_WINDOWED == 1 then
-		WorldMapFrame_Minimize()
-	else
-		WorldMapFrame_Maximize()
-	end
-
 	-- adjust map zone text position
 	WorldMapFrameAreaFrame:SetParent(WorldMapFrame)
+	WorldMapFrameAreaFrame:ClearAllPoints()
+	WorldMapFrameAreaFrame:SetPoint('TOP', WorldMapFrame, 0, -60)
 	WorldMapFrameAreaFrame:SetFrameStrata('FULLSCREEN_DIALOG')
 
 	WorldMapButton:SetParent(WorldMapDetailFrame)
