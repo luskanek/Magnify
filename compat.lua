@@ -23,7 +23,7 @@ function Magnify_HandleAddons()
 
 	-- ShaguTweaks
 	if IsAddOnLoaded('ShaguTweaks') then
-		if ShaguTweaks_config["WorldMap Window"] == 1 then
+		if ShaguTweaks_config and ShaguTweaks_config["WorldMap Window"] == 1 then
 			WorldMapScrollFrame:SetPoint('TOP', WorldMapFrame, 0, -48)
 		end
 	end
