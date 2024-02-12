@@ -153,6 +153,8 @@ local function WorldMapFrame_OnShow()
 
 	if Magnify_Settings['arrow_flash'] then
 		WorldMapPlayer:SetScript('OnUpdate', WorldMapPlayer_OnUpdate)
+	else
+		WorldMapPlayer:SetAlpha(1)
 	end
 end
 
