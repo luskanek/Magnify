@@ -1,3 +1,7 @@
+
+> [!NOTE]
+> This version of the addon is meant to be used on Turtle WoW realms. If you play on any other vanilla (1.12) realm, select the 'vanilla' branch and download that version instead.
+
 Magnify is a World of Warcraft (1.12) addon with its main feature being world map zoom. Along with this functionality, several changes have been applied to the world map frame:
 
 - The world map player arrow has been replaced with a hi-res texture.
