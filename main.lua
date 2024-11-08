@@ -51,6 +51,8 @@ local function WorldMapScrollFrame_OnMouseWheel()
 	local oldScrollV = this:GetVerticalScroll()
 
 	local cursorX, cursorY = GetCursorPosition()
+	cursorX = cursorX / WorldMapFrame:GetScale()
+	cursorY = cursorY / WorldMapFrame:GetScale()
 
 	local frameX = cursorX - this:GetLeft()
 	local frameY = this:GetTop() - cursorY
@@ -67,9 +69,10 @@ local function WorldMapScrollFrame_OnMouseWheel()
 	this.maxY = ((WorldMapDetailFrame:GetHeight() * newScale) - this:GetHeight()) / newScale
 	this.zoomedIn = WorldMapDetailFrame:GetScale() > 1
 
-	local scaleChange = newScale / oldScale
-	local newScrollH = scaleChange * (frameX - oldScrollH) - frameX
-	local newScrollV = scaleChange * (frameY + oldScrollV) - frameY
+	local centerX = -oldScrollH + frameX / oldScale
+	local centerY = oldScrollV + frameY / oldScale
+	local newScrollH = centerX - frameX / newScale
+	local newScrollV = centerY - frameY / newScale
 
 	newScrollH = min(newScrollH, this.maxX)
 	newScrollH = max(0, newScrollH)
