@@ -1,7 +1,9 @@
-Magnify is a World of Warcraft (1.12) addon with its main feature being world map zoom. Along with this functionality, several changes have been applied to the world map frame:
+Magnify is a World of Warcraft (1.12) add-on which allows the user to zoom the world map in or out.
 
-- The world map player arrow has been replaced with a hi-res texture.
-- It is now possible to set the scale of the player arrow.
-- A new flash animation was added in place of the default ping animation that would play upon opening the map.
+Other changes include:
+- The world map player arrow has been replaced with a high-res texture.
+- The old ping animation has been removed and instead the player arrow will flash for a brief duration upon opening the map.
 
-The zoom feature is backported code from retail with several adjustments to make it compatible with the Vanilla client.
+You can type `/magnify` in the in-game chat to access several customization options.
+
+The zoom feature is backported code from retail with several adjustments to make it work with the Vanilla client.
