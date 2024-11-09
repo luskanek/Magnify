@@ -1,3 +1,4 @@
+MAGNIFY_MIN_ZOOM = 1.0
 MAGNIFY_MAX_ZOOM = 1.6
 MAGNIFY_ZOOM_STEP = 0.2
 MAGNIFY_PLAYER_FLASH_INTERVAL = 0.25
@@ -35,7 +36,7 @@ local function WorldMapScrollFrame_OnMouseUp()
 	if not this.moved then
 		WorldMapButton_OnClick(arg1)
 
-		WorldMapDetailFrame:SetScale(1)
+		WorldMapDetailFrame:SetScale(MAGNIFY_MIN_ZOOM)
 
 		this:SetHorizontalScroll(0)
 		this:SetVerticalScroll(0)
@@ -60,14 +61,14 @@ local function WorldMapScrollFrame_OnMouseWheel()
 	local oldScale = WorldMapDetailFrame:GetScale()
 	local newScale
 	newScale = oldScale + arg1 * MAGNIFY_ZOOM_STEP
-	newScale = max(1, newScale)
+	newScale = max(MAGNIFY_MIN_ZOOM, newScale)
 	newScale = min(MAGNIFY_MAX_ZOOM, newScale)
 
 	WorldMapDetailFrame:SetScale(newScale)
 
 	this.maxX = ((WorldMapDetailFrame:GetWidth() * newScale) - this:GetWidth()) / newScale
 	this.maxY = ((WorldMapDetailFrame:GetHeight() * newScale) - this:GetHeight()) / newScale
-	this.zoomedIn = WorldMapDetailFrame:GetScale() > 1
+	this.zoomedIn = WorldMapDetailFrame:GetScale() > MAGNIFY_MIN_ZOOM
 
 	local centerX = -oldScrollH + frameX / oldScale
 	local centerY = oldScrollV + frameY / oldScale
@@ -173,12 +174,7 @@ local function WorldMapFrame_OnHide()
 	WorldMapPlayer:SetScript('OnUpdate', nil)
 
 	if Magnify_Settings['zoom_reset'] then
-		WorldMapDetailFrame:SetScale(1)
-
-		WorldMapScrollFrame:SetHorizontalScroll(0)
-		WorldMapScrollFrame:SetVerticalScroll(0)
-
-		WorldMapScrollFrame.zoomedIn = false
+		Magnify_ResetZoom()
 	end
 end
 
@@ -206,6 +202,14 @@ local function HandleEvent()
 	scrollframe:SetScript('OnMouseWheel', WorldMapScrollFrame_OnMouseWheel)
 
 	WorldMapScrollFrameScrollBar:Hide()
+
+	if WORLDMAP_WINDOWED then
+		if WORLDMAP_WINDOWED == 1 then
+			WorldMapFrame_Minimize()
+		else
+			WorldMapFrame_Maximize()
+		end
+	end
 
 	-- adjust map zone text position
 	WorldMapFrameAreaFrame:SetParent(WorldMapFrame)
@@ -254,3 +258,12 @@ end
 local handler = CreateFrame('Frame')
 handler:RegisterEvent('VARIABLES_LOADED')
 handler:SetScript('OnEvent', HandleEvent)
+
+function Magnify_ResetZoom()
+	WorldMapDetailFrame:SetScale(MAGNIFY_MIN_ZOOM)
+
+	WorldMapScrollFrame:SetHorizontalScroll(0)
+	WorldMapScrollFrame:SetVerticalScroll(0)
+
+	WorldMapScrollFrame.zoomedIn = false
+end
