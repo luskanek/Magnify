@@ -234,6 +234,7 @@ local function HandleEvent()
 	end
 
 	WorldMapPing.Show = function() return end
+	WorldMapPing:SetModelScale(0)
 
 	-- replace player indicator model with a better solution
 	local size = 24 * (Magnify_Settings['arrow_scale'] or 1)
