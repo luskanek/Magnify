@@ -51,8 +51,8 @@ local function WorldMapScrollFrame_OnMouseWheel()
 	local oldScrollV = this:GetVerticalScroll()
 
 	local cursorX, cursorY = GetCursorPosition()
-	cursorX = cursorX / WorldMapFrame:GetScale()
-	cursorY = cursorY / WorldMapFrame:GetScale()
+	cursorX = cursorX / this:GetEffectiveScale()
+	cursorY = cursorY / this:GetEffectiveScale()
 
 	local frameX = cursorX - this:GetLeft()
 	local frameY = this:GetTop() - cursorY
