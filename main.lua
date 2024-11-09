@@ -86,6 +86,8 @@ end
 local function WorldMapScrollFrame_OnPan(cursorX, cursorY)
 	local dX = WorldMapScrollFrame.cursorX - cursorX
 	local dY = cursorY - WorldMapScrollFrame.cursorY
+	dX = dX / this:GetEffectiveScale()
+	dY = dY / this:GetEffectiveScale()
 	if abs(dX) >= 1 or abs(dY) >= 1 then
 		WorldMapScrollFrame.moved = true
 
