@@ -111,23 +111,29 @@ local function WorldMapButton_OnUpdate()
 	-- reposition player and ping indicators
 	local x, y = GetPlayerMapPosition('player')
 
-	x = x * this:GetWidth()
-	y = -y * this:GetHeight()
+	if x == 0 and y == 0 then
+		WorldMapPlayer.Icon:Hide()
+	else
+		WorldMapPlayer.Icon:Show()
 
-	WorldMapPlayer:SetPoint('CENTER', this, 'TOPLEFT', x, y)
+		x = x * this:GetWidth()
+		y = -y * this:GetHeight()
 
-	-- credit: https://wowwiki-archive.fandom.com/wiki/SetTexCoord_Transformations
-	local s = sqrt(2)
-	local r = WorldMapPlayerModel:GetFacing()
+		WorldMapPlayer:SetPoint('CENTER', this, 'TOPLEFT', x, y)
 
-	local LRx, LRy = 0.5 + cos(r + 0.25 * math.pi) / s, 0.5 + sin(r + 0.25 * math.pi) / s
-	local LLx, LLy = 0.5 + cos(r + 0.75 * math.pi) / s, 0.5 + sin(r + 0.75 * math.pi) / s
-	local ULx, ULy = 0.5 + cos(r + 1.25 * math.pi) / s, 0.5 + sin(r + 1.25 * math.pi) / s
-	local URx, URy = 0.5 + cos(r - 0.25 * math.pi) / s, 0.5 + sin(r - 0.25 * math.pi) / s
+		-- credit: https://wowwiki-archive.fandom.com/wiki/SetTexCoord_Transformations
+		local s = sqrt(2)
+		local r = WorldMapPlayerModel:GetFacing()
 
-	WorldMapPlayerIcon:SetTexCoord(ULx, ULy, LLx, LLy, URx, URy, LRx, LRy)
-	if WorldMapScrollFrame.panning then
-		WorldMapScrollFrame_OnPan(GetCursorPosition())
+		local LRx, LRy = 0.5 + cos(r + 0.25 * math.pi) / s, 0.5 + sin(r + 0.25 * math.pi) / s
+		local LLx, LLy = 0.5 + cos(r + 0.75 * math.pi) / s, 0.5 + sin(r + 0.75 * math.pi) / s
+		local ULx, ULy = 0.5 + cos(r + 1.25 * math.pi) / s, 0.5 + sin(r + 1.25 * math.pi) / s
+		local URx, URy = 0.5 + cos(r - 0.25 * math.pi) / s, 0.5 + sin(r - 0.25 * math.pi) / s
+
+		WorldMapPlayerIcon:SetTexCoord(ULx, ULy, LLx, LLy, URx, URy, LRx, LRy)
+		if WorldMapScrollFrame.panning then
+			WorldMapScrollFrame_OnPan(GetCursorPosition())
+		end
 	end
 end
 
