@@ -1,0 +1,29 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
+    <ScrollFrame name="WorldMapFrameScrollFrame" parent="WorldMapFrame" inherits="FauxScrollFrameTemplate" frameLevel="3">
+        <Size>
+            <AbsDimension x="1002" y="668" />
+        </Size>
+        <Anchors>
+            <Anchor point="TOP" relativeTo="WorldMapFrame" relativePoint="TOP">
+                <Offset x="0" y="-70" />
+            </Anchor>
+        </Anchors>
+        <Scripts>
+            <OnLoad>
+                this:SetScrollChild(WorldMapDetailFrame)
+            </OnLoad>        
+            <OnMouseDown>
+                WorldMapFrameScrollFrame_OnMouseDown()
+            </OnMouseDown>
+            <OnMouseUp>
+                WorldMapFrameScrollFrame_OnMouseUp()
+            </OnMouseUp>
+            <OnMouseWheel>
+                WorldMapFrameScrollFrame_OnMouseWheel()
+            </OnMouseWheel>
+            <OnShow>
+                getglobal(this:GetName() .. "ScrollBar"):Hide()
+            </OnShow>
+        </Scripts>
+    </ScrollFrame>
+</Ui>

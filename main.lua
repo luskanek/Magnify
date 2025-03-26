@@ -16,7 +16,7 @@ local sqrt = math.sqrt
 local GetCursorPosition = GetCursorPosition
 local GetPlayerMapPosition = GetPlayerMapPosition
 
-local function WorldMapScrollFrame_OnMouseDown()
+function WorldMapFrameScrollFrame_OnMouseDown()
 	if arg1 == 'LeftButton' and this.zoomedIn then
 		this.panning = true
 
@@ -30,7 +30,7 @@ local function WorldMapScrollFrame_OnMouseDown()
 	end
 end
 
-local function WorldMapScrollFrame_OnMouseUp()
+function WorldMapFrameScrollFrame_OnMouseUp()
 	this.panning = false
 
 	if not this.moved then
@@ -47,7 +47,7 @@ local function WorldMapScrollFrame_OnMouseUp()
 	this.moved = false
 end
 
-local function WorldMapScrollFrame_OnMouseWheel()
+function WorldMapFrameScrollFrame_OnMouseWheel()
 	local oldScrollH = this:GetHorizontalScroll()
 	local oldScrollV = this:GetVerticalScroll()
 
@@ -84,23 +84,23 @@ local function WorldMapScrollFrame_OnMouseWheel()
 	this:SetVerticalScroll(newScrollV)
 end
 
-local function WorldMapScrollFrame_OnPan(cursorX, cursorY)
-	local dX = WorldMapScrollFrame.cursorX - cursorX
-	local dY = cursorY - WorldMapScrollFrame.cursorY
+local function WorldMapFrameScrollFrame_OnPan(cursorX, cursorY)
+	local dX = WorldMapFrameScrollFrame.cursorX - cursorX
+	local dY = cursorY - WorldMapFrameScrollFrame.cursorY
 	dX = dX / this:GetEffectiveScale()
 	dY = dY / this:GetEffectiveScale()
 	if abs(dX) >= 1 or abs(dY) >= 1 then
-		WorldMapScrollFrame.moved = true
+		WorldMapFrameScrollFrame.moved = true
 
 		local x
-		x = max(0, dX - WorldMapScrollFrame.x)
-		x = min(x, WorldMapScrollFrame.maxX)
-		WorldMapScrollFrame:SetHorizontalScroll(-x)
+		x = max(0, dX - WorldMapFrameScrollFrame.x)
+		x = min(x, WorldMapFrameScrollFrame.maxX)
+		WorldMapFrameScrollFrame:SetHorizontalScroll(-x)
 
 		local y
-		y = max(0, dY + WorldMapScrollFrame.y)
-		y = min(y, WorldMapScrollFrame.maxY)
-		WorldMapScrollFrame:SetVerticalScroll(y)
+		y = max(0, dY + WorldMapFrameScrollFrame.y)
+		y = min(y, WorldMapFrameScrollFrame.maxY)
+		WorldMapFrameScrollFrame:SetVerticalScroll(y)
 	end
 end
 
@@ -131,8 +131,8 @@ local function WorldMapButton_OnUpdate()
 		local URx, URy = 0.5 + cos(r - 0.25 * math.pi) / s, 0.5 + sin(r - 0.25 * math.pi) / s
 
 		WorldMapPlayerIcon:SetTexCoord(ULx, ULy, LLx, LLy, URx, URy, LRx, LRy)
-		if WorldMapScrollFrame.panning then
-			WorldMapScrollFrame_OnPan(GetCursorPosition())
+		if WorldMapFrameScrollFrame.panning then
+			WorldMapFrameScrollFrame_OnPan(GetCursorPosition())
 		end
 	end
 end
@@ -174,7 +174,7 @@ local WorldMapFrame_OldOnHide = WorldMapFrame:GetScript('OnHide')
 local function WorldMapFrame_OnHide()
 	WorldMapFrame_OldOnHide()
 
-	WorldMapScrollFrame.panning = false
+	WorldMapFrameScrollFrame.panning = false
 
 	WorldMapPlayer.Flashes = 0
 	WorldMapPlayer:SetScript('OnUpdate', nil)
@@ -195,19 +195,6 @@ local function HandleEvent()
 	end
 
 	MAGNIFY_MAX_ZOOM = (Magnify_Settings['max_zoom'] or MAGNIFY_MAX_ZOOM)
-
-	local scrollframe = CreateFrame('ScrollFrame', 'WorldMapScrollFrame', WorldMapFrame, 'FauxScrollFrameTemplate')
-	scrollframe:SetWidth(1002)
-	scrollframe:SetHeight(668)
-	scrollframe:SetPoint('TOP', WorldMapFrame, 0, -70)
-	scrollframe:SetFrameLevel(3)
-	scrollframe:EnableMouse(true)
-	scrollframe:SetScrollChild(WorldMapDetailFrame)
-	scrollframe:SetScript('OnMouseDown', WorldMapScrollFrame_OnMouseDown)
-	scrollframe:SetScript('OnMouseUp', WorldMapScrollFrame_OnMouseUp)
-	scrollframe:SetScript('OnMouseWheel', WorldMapScrollFrame_OnMouseWheel)
-
-	WorldMapScrollFrameScrollBar:Hide()
 
 	if WORLDMAP_WINDOWED then
 		if WORLDMAP_WINDOWED == 1 then
@@ -269,8 +256,8 @@ handler:SetScript('OnEvent', HandleEvent)
 function Magnify_ResetZoom()
 	WorldMapDetailFrame:SetScale(MAGNIFY_MIN_ZOOM)
 
-	WorldMapScrollFrame:SetHorizontalScroll(0)
-	WorldMapScrollFrame:SetVerticalScroll(0)
+	WorldMapFrameScrollFrame:SetHorizontalScroll(0)
+	WorldMapFrameScrollFrame:SetVerticalScroll(0)
 
-	WorldMapScrollFrame.zoomedIn = false
+	WorldMapFrameScrollFrame.zoomedIn = false
 end

@@ -5,6 +5,8 @@
 ## Version: GIT
 ## SavedVariablesPerCharacter: Magnify_Settings
 
+Frames.xml
+
 main.lua
 options.lua
 

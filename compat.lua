@@ -24,11 +24,11 @@ local function HandleAddons()
 	-- ShaguTweaks
 	if IsAddOnLoaded('ShaguTweaks') then
 		if ShaguTweaks_config and ShaguTweaks_config["WorldMap Window"] == 1 then
-			if WorldMapScrollFrame then
-				WorldMapScrollFrame:SetPoint('TOP', WorldMapFrame, 0, -48)
+			if WorldMapFrameScrollFrame then
+				WorldMapFrameScrollFrame:SetPoint('TOP', WorldMapFrame, 0, -48)
 
 				if WORLDMAP_WINDOWED and WORLDMAP_WINDOWED == 1 then
-					WorldMapScrollFrame:SetPoint('TOP', WorldMapFrame, 2, -24)
+					WorldMapFrameScrollFrame:SetPoint('TOP', WorldMapFrame, 2, -24)
 				end
 			end
 		end
@@ -52,7 +52,7 @@ local function HandleAddons()
 
 	if IsAddOnLoaded('pfUI') then
 		if pfUI.map then
-			WorldMapScrollFrame:SetPoint('TOP', WorldMapFrame, 0, -48)
+			WorldMapFrameScrollFrame:SetPoint('TOP', WorldMapFrame, 0, -48)
 		end
 	end
 end
@@ -65,13 +65,13 @@ local WorldMapFrame_OldMinimize = WorldMapFrame_Minimize
 function WorldMapFrame_Minimize()
 	WorldMapFrame_OldMinimize()
 
-	if WorldMapScrollFrame then
+	if WorldMapFrameScrollFrame then
 		MAGNIFY_MIN_ZOOM = 0.7
 
-		WorldMapScrollFrame:SetWidth(702)
-		WorldMapScrollFrame:SetHeight(468)
-		WorldMapScrollFrame:SetPoint('TOP', WorldMapFrame, 2, -24)
-		WorldMapScrollFrame:SetScrollChild(WorldMapDetailFrame)
+		WorldMapFrameScrollFrame:SetWidth(702)
+		WorldMapFrameScrollFrame:SetHeight(468)
+		WorldMapFrameScrollFrame:SetPoint('TOP', WorldMapFrame, 2, -24)
+		WorldMapFrameScrollFrame:SetScrollChild(WorldMapDetailFrame)
 
 		WorldMapButton:SetScale(1)
 
@@ -88,13 +88,13 @@ local WorldMapFrame_OldMaximize = WorldMapFrame_Maximize
 function WorldMapFrame_Maximize()
 	WorldMapFrame_OldMaximize()
 
-	if WorldMapScrollFrame then
+	if WorldMapFrameScrollFrame then
 		MAGNIFY_MIN_ZOOM = 1
 
-		WorldMapScrollFrame:SetWidth(1002)
-		WorldMapScrollFrame:SetHeight(668)
-		WorldMapScrollFrame:SetPoint('TOP', WorldMapFrame, 0, -70)
-		WorldMapScrollFrame:SetScrollChild(WorldMapDetailFrame)
+		WorldMapFrameScrollFrame:SetWidth(1002)
+		WorldMapFrameScrollFrame:SetHeight(668)
+		WorldMapFrameScrollFrame:SetPoint('TOP', WorldMapFrame, 0, -70)
+		WorldMapFrameScrollFrame:SetScrollChild(WorldMapDetailFrame)
 
 		WorldMapFrameAreaFrame:ClearAllPoints()
 		WorldMapFrameAreaFrame:SetPoint('TOP', WorldMapFrame, 0, -60)
