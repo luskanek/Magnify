@@ -16,6 +16,9 @@ local sqrt = math.sqrt
 local GetCursorPosition = GetCursorPosition
 local GetPlayerMapPosition = GetPlayerMapPosition
 
+--Fix covering players and map poi
+WorldMapFrameScrollFrame:SetFrameLevel(1)
+
 function WorldMapFrameScrollFrame_OnMouseDown()
 	if arg1 == 'LeftButton' and this.zoomedIn then
 		this.panning = true
