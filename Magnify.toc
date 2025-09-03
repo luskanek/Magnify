@@ -1,0 +1,13 @@
+## Interface: 11200
+## Title: Magnify |cff808080by luskanek
+## Author: luskanek
+## Notes: World map zoom and enhancements.
+## Version: GIT
+## SavedVariablesPerCharacter: Magnify_Settings
+
+Frames.xml
+
+main.lua
+options.lua
+
+compat.lua
